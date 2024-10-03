@@ -1,0 +1,44 @@
+tasks:
+  training:
+    bucket_uri: "gs://llm-finetune-ndonthi1"
+    project_number: "878726209708"
+    hf_token: "your_hf_token"
+    template: "openassistant-guanaco"
+    train_dataset_name: "timdettmers/openassistant-guanaco"
+    train_split_name: "train"
+    eval_dataset_name: "timdettmers/openassistant-guanaco"
+    eval_split_name: "test"
+    instruct_column_in_dataset: "text"
+    train_docker_uri: "us-docker.pkg.dev/vertex-ai/vertex-vision-model-garden-dockers/pytorch-peft-train:20240625_0902_RC00"
+    model_id: "meta-llama/Meta-Llama-3-8B-Instruct"
+    accelerator_type: "NVIDIA_L4"
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 8
+    max_seq_length: 4096
+    max_steps: -1
+    num_epochs: 1.0
+    finetuning_precision_mode: "4bit"
+    learning_rate: 5e-5
+    lr_scheduler_type: "cosine"
+    lora_rank: 16
+    lora_alpha: 32
+    lora_dropout: 0.05
+    enable_gradient_checkpointing: true
+    attn_implementation: "flash_attention_2"
+    optimizer: "paged_adamw_32bit"
+    warmup_ratio: "0.01"
+    report_to: "tensorboard"
+    save_steps: 10
+    logging_steps: 10
+    machine_type: "g2-standard-12"
+    replica_count: 1
+    job_name: "ndonthi1-llama3-finetune"
+  
+  inference:
+    inference_model_id: "meta-llama/Meta-Llama-3-8B-Instruct"
+    inference_accelerator_type: "NVIDIA_T4"
+    inference_machine_type: "n1-standard-4"
+    inference_batch_size: 4
+    inference_max_seq_length: 2048
+    inference_precision_mode: "float16"
+    inference_model_output_dir: "gs://llm-finetune-ndonthi1/inference-results"
